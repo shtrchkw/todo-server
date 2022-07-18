@@ -16,6 +16,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             )
             .service(
                 web::resource("/todo")
+                    .route(web::get().to(todo::get))
                     .route(web::post().to(todo::post))
             )
             .route("/todo/{todo_id}", web::patch().to(todo::patch))

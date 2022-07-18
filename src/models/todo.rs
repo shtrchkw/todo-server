@@ -43,6 +43,19 @@ impl NewTodo {
     }
 }
 
+pub fn get(
+    pool: &web::Data<Pool>,
+    user_id: i32
+) -> Result<Vec<Todo>, ServiceError> {
+    use crate::schema::todo::dsl::{todo, user_id as todo_user_id};
+
+    let conn = &pool.get()?;
+    let todo_from_user_id = todo.filter(todo_user_id.eq(user_id))
+        .load::<Todo>(conn)?;
+
+    Ok(todo_from_user_id)
+}
+
 pub fn create(
     pool: &web::Data<Pool>,
     title: &str,

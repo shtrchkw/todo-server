@@ -15,6 +15,21 @@ pub struct UpdateTodoData {
     pub todo_status_id: i32,
 }
 
+pub async fn get(
+    pool: web::Data<Pool>,
+    logged_user: LoggedUser
+) -> Result<HttpResponse, actix_web::Error> {
+
+    let todo = web::block(move ||
+        crate::models::todo::get(
+            &pool,
+            logged_user.id
+        )
+    ).await??;
+
+    Ok(HttpResponse::Ok().json(todo))
+}
+
 pub async fn post(
     todo_data: web::Json<TodoData>,
     pool: web::Data<Pool>,
