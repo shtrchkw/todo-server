@@ -60,6 +60,26 @@ pub fn create(
     Ok(inserted_todo)
 }
 
+pub fn update(
+    pool: &web::Data<Pool>,
+    todo_id: i32,
+    user_id: i32,
+    todo_status_id: i32
+) -> Result<Todo, ServiceError> {
+    use crate::schema::todo::dsl::{todo, id, todo_status_id as todo_todo_status_id , user_id as todo_user_id};
+
+    let conn = &pool.get()?;
+    let updated_todo = diesel::update(
+        todo
+            .filter(id.eq(todo_id))
+            .filter(todo_user_id.eq(user_id))
+    )
+    .set(todo_todo_status_id.eq(todo_status_id))
+    .get_result(conn)?;
+
+    Ok(updated_todo)
+}
+
 pub fn delete(
     pool: &web::Data<Pool>,
     todo_id: i32,

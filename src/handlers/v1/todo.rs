@@ -10,6 +10,11 @@ pub struct TodoData {
     pub description: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct UpdateTodoData {
+    pub todo_status_id: i32,
+}
+
 pub async fn post(
     todo_data: web::Json<TodoData>,
     pool: web::Data<Pool>,
@@ -23,6 +28,24 @@ pub async fn post(
             &todo_data.title,
             &todo_data.description,
             logged_user.id
+        )
+    ).await??;
+
+    Ok(HttpResponse::Ok().json(todo))
+}
+
+pub async fn patch(
+    todo_id: web::Path<i32>,
+    update_todo_data: web::Json<UpdateTodoData>,
+    pool: web::Data<Pool>,
+    logged_user: LoggedUser
+) -> Result<HttpResponse, actix_web::Error> {
+    let todo = web::block(move ||
+        crate::models::todo::update(
+            &pool,
+            todo_id.into_inner(),
+            logged_user.id,
+            update_todo_data.into_inner().todo_status_id
         )
     ).await??;
 
