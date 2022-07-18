@@ -1,6 +1,7 @@
 use actix_web::web;
 
 mod auth;
+mod todo;
 mod user;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -12,6 +13,10 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                     .route(web::get().to(auth::get))
                     .route(web::post().to(auth::post))
                     .route(web::delete().to(auth::delete))
+            )
+            .service(
+                web::resource("/todo")
+                    .route(web::post().to(todo::post))
             )
     );
 }
