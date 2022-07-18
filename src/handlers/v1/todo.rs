@@ -28,3 +28,20 @@ pub async fn post(
 
     Ok(HttpResponse::Ok().json(todo))
 }
+
+pub async fn delete(
+    todo_id: web::Path<i32>,
+    pool: web::Data<Pool>,
+    logged_user: LoggedUser
+) -> Result<HttpResponse, actix_web::Error> {
+
+    let todo = web::block(move ||
+        crate::models::todo::delete(
+            &pool,
+            todo_id.into_inner(),
+            logged_user.id
+        )
+    ).await??;
+
+    Ok(HttpResponse::Ok().json(todo))
+}

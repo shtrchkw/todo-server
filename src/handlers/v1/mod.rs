@@ -18,5 +18,6 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 web::resource("/todo")
                     .route(web::post().to(todo::post))
             )
+            .route("/todo/{todo_id}", web::delete().to(todo::delete))
     );
 }

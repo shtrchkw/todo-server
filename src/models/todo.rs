@@ -59,3 +59,21 @@ pub fn create(
 
     Ok(inserted_todo)
 }
+
+pub fn delete(
+    pool: &web::Data<Pool>,
+    todo_id: i32,
+    user_id: i32,
+) -> Result<Todo, ServiceError> {
+    use crate::schema::todo::dsl::{todo, id, user_id as todo_user_id};
+
+    let conn = &pool.get()?;
+    let deleted_todo = diesel::delete(
+        todo
+            .filter(id.eq(todo_id))
+            .filter(todo_user_id.eq(user_id))
+    )
+    .get_result(conn)?;
+
+    Ok(deleted_todo)  
+}
