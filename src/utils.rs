@@ -2,6 +2,7 @@ use crate::errors::ServiceError;
 use argon2::{self, Config};
 
 lazy_static::lazy_static! {
+    pub static ref IDENTITY_SECRET_KEY: String = std::env::var("IDENTITY_SECRET_KEY").expect("IDENTITIY_SECRET_KEY must be set.");
     pub static ref PWHASH_SECRET_KEY: String = std::env::var("PWHASH_SECRET_KEY").expect("PWHASH_SECRET_KEY must be set.");
 }
 
