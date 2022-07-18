@@ -1,0 +1,17 @@
+services:
+  postgres:
+    container_name: "swesalon-todo-db"
+    image: "postgres"
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - "POSTGRES_USER=admin"
+      - "POSTGRES_DB=swesalontododb"
+      - "POSTGRES_PASSWORD=swesalonpw"
+      - "TZ=Asia/Tokyo"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:
