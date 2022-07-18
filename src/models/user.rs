@@ -51,6 +51,33 @@ impl From<User> for SlimUser {
     }
 }
 
+pub struct AuthQuery {
+    pub email: String,
+    pub password: String,
+}
+
+pub fn verify_auth_data(
+    pool: &web::Data<Pool>,
+    auth_query: AuthQuery
+) -> Result<SlimUser, ServiceError> {
+    use crate::schema::users::dsl::{users, email};
+
+    let conn = &pool.get()?;
+    let mut result = users
+        .filter(email.eq(auth_query.email))
+        .limit(1)
+        .load::<User>(conn)?;
+
+    if let Some(user) = result.pop() {
+        if let Ok(matching) = crate::utils::verify(&user.password_hash, &auth_query.password) {
+            if matching {
+                return Ok(user.into());
+            }
+        }
+    }
+
+    Err(ServiceError::Unauthorized)
+}
 
 pub fn create(
     pool: &web::Data<Pool>,
